@@ -18,18 +18,21 @@ to a version range.
 
 	$ vert ">1.0.0" 1.1.0
 	1.1.0
+
 	$ vert "<1.0.0" 1.1.0
-	$   # No output because nothing matched.
+	   # No output because nothing matched.
+
+	$ vert -f "<1.0.0" 1.1.0
+	1.1.0   # -f returns all failures, rather than matches.
+
 	$ vert ">1.0.0" 1.1.0 1.1.1 1.2.3 0.1.1
 	1.1.0
 	1.1.1
 	1.2.3
-	$
 
 See below for information about how to determine the number of failed tests.
 
-Exit codes
-==========
+EXIT CODES:
 
 vert returns exit codes based on the number of failed matches. There are a few
 reserved exit codes:
@@ -45,6 +48,32 @@ Any other error codes indicate the number of failed tests. For example:
 	1.2.3
 	$ echo $?
 	2   # <-- Two tests failed.
+
+BASE VERSIONS:
+
+The base version may be in any of the following formats:
+
+- An exact semantic version number
+	- 1.2.3
+	- v1.2.3
+	- 1.2.3-alpha.1+10212015
+- A semantic version range
+	- *
+	- !=1.0.0
+	- >=1.2.3
+	- >1.2.3,<1.3.2
+	- ~1.2.0
+	- ^2.3
+
+VERSIONS:
+
+Other than the base version, all other supplied versions must follow the
+SemVer 2 spec. Examples:
+
+	- 1.2.3
+	- v1.2.3
+	- 1.2.3-alpha.1+10212015
+	- v1.2.3-alpha.1+10212015
 `
 
 func main() {
@@ -53,6 +82,7 @@ func main() {
 	app.Usage = description
 	app.Action = run
 	app.Version = version
+	app.ArgsUsage = "BASE VERSION [VERSION [VERSION [...]]"
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
 			Name:  "failed,f",
@@ -66,6 +96,7 @@ func main() {
 	app.Run(os.Args)
 }
 
+// run handles all of the flags and then runs the main action.
 func run(c *cli.Context) {
 	args := c.Args()
 	if len(args) < 2 {
@@ -87,6 +118,9 @@ func run(c *cli.Context) {
 	pvers(out)
 }
 
+// compare compiles a base version comparator, and then compares all cases to it.
+//
+// It retuns an array of versions that passed, and an array of versions that failed.
 func compare(base string, cases []string) ([]*semver.Version, []*semver.Version) {
 	constraint, err := semver.NewConstraint(base)
 	if err != nil {
@@ -112,6 +146,7 @@ func compare(base string, cases []string) ([]*semver.Version, []*semver.Version)
 	return passed, failed
 }
 
+// pvers prints a list of versions to standard out.
 func pvers(vers []*semver.Version) {
 	for _, v := range vers {
 		fmt.Fprintln(os.Stdout, v.String())
