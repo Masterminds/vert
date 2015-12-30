@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"sort"
+	"strings"
 
 	"github.com/Masterminds/semver"
 	"github.com/codegangsta/cli"
@@ -29,6 +31,14 @@ to a version range.
 	1.1.0
 	1.1.1
 	1.2.3
+
+Vert can also convert a Git version to a SemVer 2 version.
+
+	$ vert -g ">1" v1.10.0-123-g0239788                                                                                                                                                          1 ↵
+	1.10.0+123.g0239788
+
+Note that it assigns the git commit count and hash to the build metadata, not
+to a pre-release tag.
 
 See below for information about how to determine the number of failed tests.
 
@@ -74,13 +84,14 @@ SemVer 2 spec. Examples:
 	- v1.2.3
 	- 1.2.3-alpha.1+10212015
 	- v1.2.3-alpha.1+10212015
+	- 1 (equivalent to 1.0.0)
 `
 
 func main() {
 	app := cli.NewApp()
 	app.Name = name
 	app.Usage = description
-	app.Action = run
+	app.Action = func(c *cli.Context) { res := run(c); os.Exit(res) }
 	app.Version = version
 	app.ArgsUsage = "BASE VERSION [VERSION [VERSION [...]]"
 	app.Flags = []cli.Flag{
@@ -92,19 +103,39 @@ func main() {
 			Name:  "sort,s",
 			Usage: "Sort the versions before printing. Without this, versions are returned in the order they were tested.",
 		},
+		cli.BoolFlag{
+			Name:  "git,g",
+			Usage: "Assume that (non-base) versions are in Git `git describe --tags` version format, and convert to SemVer.",
+		},
 	}
 	app.Run(os.Args)
 }
 
+type context interface {
+	Bool(string) bool
+	Args() cli.Args
+}
+
 // run handles all of the flags and then runs the main action.
-func run(c *cli.Context) {
+func run(c context) int {
 	args := c.Args()
 	if len(args) < 2 {
 		perr("Not enough arguments")
-		os.Exit(128)
+		return 128
 	}
 
-	pass, fail := compare(args[0], args[1:])
+	if c.Bool("git") {
+		for i := 1; i < len(args); i++ {
+			nv, err := git2semver(args[i])
+			if err != nil {
+				perr("Not a recognize git version: %s", args[i])
+				continue
+			}
+			args[i] = nv.String()
+		}
+	}
+
+	pass, fail, code := compare(args[0], args[1:])
 
 	out := pass
 	if c.Bool("failed") {
@@ -116,19 +147,21 @@ func run(c *cli.Context) {
 	}
 
 	pvers(out)
+	return code
 }
 
 // compare compiles a base version comparator, and then compares all cases to it.
 //
 // It retuns an array of versions that passed, and an array of versions that failed.
-func compare(base string, cases []string) ([]*semver.Version, []*semver.Version) {
+func compare(base string, cases []string) ([]*semver.Version, []*semver.Version, int) {
+	passed, failed := []*semver.Version{}, []*semver.Version{}
+
 	constraint, err := semver.NewConstraint(base)
 	if err != nil {
 		perr("Could not parse constraint %s", base)
-		os.Exit(256)
+		return passed, failed, 256
 	}
 
-	passed, failed := []*semver.Version{}, []*semver.Version{}
 	for _, t := range cases {
 		ver, err := semver.NewVersion(t)
 		if err != nil {
@@ -143,24 +176,42 @@ func compare(base string, cases []string) ([]*semver.Version, []*semver.Version)
 		failed = append(failed, ver)
 	}
 
-	return passed, failed
+	return passed, failed, len(failed)
 }
+
+var stdout io.Writer = os.Stdout
+var stderr io.Writer = os.Stderr
 
 // pvers prints a list of versions to standard out.
 func pvers(vers []*semver.Version) {
 	for _, v := range vers {
-		fmt.Fprintln(os.Stdout, v.String())
+		fmt.Fprintln(stdout, v.String())
 	}
 }
 
 // pout prints to stdout.
 func pout(msg string, args ...interface{}) {
-	fmt.Fprintf(os.Stdout, msg, args...)
-	fmt.Fprintln(os.Stdout)
+	fmt.Fprintf(stdout, msg, args...)
+	fmt.Fprintln(stdout)
 }
 
 // perr prints to stderr.
 func perr(msg string, args ...interface{}) {
-	fmt.Fprintf(os.Stderr, msg, args...)
-	fmt.Fprintln(os.Stderr)
+	fmt.Fprintf(stderr, msg, args...)
+	fmt.Fprintln(stderr)
+}
+
+// git2semver converts a Git version to a SemVer 2 version
+//
+// This assumes that the base tag is a semver tag.
+//
+// v1.2.3-3-afeee becomes 1.2.3+3.afeee
+func git2semver(ver string) (*semver.Version, error) {
+	va := strings.Split(ver, "-")
+	target := va[0]
+	if len(va) > 1 {
+		md := strings.Join(va[1:], ".")
+		target += "+" + md
+	}
+	return semver.NewVersion(target)
 }
