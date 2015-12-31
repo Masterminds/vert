@@ -58,6 +58,13 @@ Base versions can be fuzzy:
 - `vert "^2" 2.1.3`
 - `vert ">1.1.2,<1.3.4" 1.2`
 
+And `vert` understands alpha/beta markers:
+
+```
+vert ">1.0.0-alpha.1" 1.0.0-beta.1
+1.0.0-beta.1
+```
+
 Multiple versions can be compared at once, and using the `-s` flag, you
 can even sort the output:
 
