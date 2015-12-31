@@ -111,6 +111,9 @@ func main() {
 	app.Run(os.Args)
 }
 
+// context describes the relevant portion of a cli.Context.
+//
+// This abstraction makes mocking easy.
 type context interface {
 	Bool(string) bool
 	Args() cli.Args
