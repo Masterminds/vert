@@ -13,7 +13,7 @@ import (
 
 const name = "vert"
 const version = "0.1.0"
-const description = `Compare versions.
+const description = `Version Tester. Compare versions.
 
 Vert is a tool for comparing two version strings, or comparing a version string
 to a version range.
