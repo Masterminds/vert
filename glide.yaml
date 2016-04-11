@@ -1,4 +1,5 @@
 package: github.com/technosophos/vert
 import:
 - package: github.com/Masterminds/semver
+  version: ^1.x
 - package: github.com/codegangsta/cli
