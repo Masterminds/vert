@@ -1,4 +1,6 @@
 # vert: A command-line version comparison tool
+[![Stability: Experimental](https://masterminds.github.io/stability/experimental.svg)](https://masterminds.github.io/stability/experimental.html)
+
 
 vert (Version Tester) is a simple command line tool for comparing two or
 more versions, or testing versions against fuzzy version rules.
