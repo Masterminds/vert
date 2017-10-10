@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/codegangsta/cli"
+	"github.com/urfave/cli"
 )
 
 type mockContext struct {

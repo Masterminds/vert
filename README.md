@@ -119,20 +119,17 @@ ideas, please let us know in the issue queue.
 ## Installation
 
 Assuming you have make, [Go](http://golang.org) version 1.5.1 or later and
-[Glide](https://github.com/Masterminds/glide) version 0.8.2 or greater, you can
-simply run `make`:
+[dep](https://github.com/golang/dep), you can simply run `make`:
 
 ```
 $ make all
-glide install
-[INFO] Fetching updates for github.com/Masterminds/semver.
-[INFO] Fetching updates for github.com/codegangsta/cli.
-[INFO] github.com/Masterminds/semver is already set to version 6333b7bd29aad1d79898ff568fd90a8aa533ae82. Skipping update.
-[INFO] github.com/codegangsta/cli is already set to version c31a7975863e7810c92e2e288a9ab074f9a88f29. Skipping update.
-[INFO] Setting version for github.com/Masterminds/semver to 6333b7bd29aad1d79898ff568fd90a8aa533ae82.
-[INFO] Setting version for github.com/codegangsta/cli to c31a7975863e7810c92e2e288a9ab074f9a88f29.
+dep ensure
+dep status
+PROJECT                        CONSTRAINT  VERSION  REVISION  LATEST   PKGS USED
+github.com/Masterminds/semver  ^1.0.0      v1.4.0   15d8430   15d8430  1
+github.com/urfave/cli          ^1.0.0      v1.20.0  cfb3883   cfb3883  1
 go test .
-ok  	github.com/technosophos/vert	0.006s
+ok  	github.com/Masterminds/vert	0.006s
 go build -o vert vert.go
 install -d /usr/local/bin/
 install -m 755 ./vert /usr/local/bin/vert

@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/Masterminds/semver"
-	"github.com/codegangsta/cli"
+	"github.com/urfave/cli"
 )
 
 const name = "vert"
