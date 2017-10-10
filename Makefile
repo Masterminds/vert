@@ -1,5 +1,8 @@
 all: bootstrap test install
 
+setup:
+	go get -u github.com/Masterminds/glide
+
 bootstrap:
 	glide install
 
@@ -13,4 +16,4 @@ install: build
 	install -d ${DESTDIR}/usr/local/bin/
 	install -m 755 ./vert ${DESTDIR}/usr/local/bin/vert
 
-.PHONY: bootstrap test build install all
+.PHONY: bootstrap test build install all setup
