@@ -162,7 +162,7 @@ func compare(base string, cases []string) ([]*semver.Version, []*semver.Version,
 	constraint, err := semver.NewConstraint(base)
 	if err != nil {
 		perr("Could not parse constraint %s", base)
-		return passed, failed, 256
+		return passed, failed, 128
 	}
 
 	for _, t := range cases {
