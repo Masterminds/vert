@@ -1,5 +1,5 @@
 # vert: A command-line version comparison tool
-[![Stability: Experimental](https://masterminds.github.io/stability/experimental.svg)](https://masterminds.github.io/stability/experimental.html)
+[![Stability: Active](https://masterminds.github.io/stability/active.svg)](https://masterminds.github.io/stability/active.html)
 [![Build Status](https://travis-ci.org/Masterminds/vert.svg?branch=master)](https://travis-ci.org/Masterminds/vert)
 
 
