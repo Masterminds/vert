@@ -1,10 +1,11 @@
 all: bootstrap test install
 
 setup:
-	go get -u github.com/Masterminds/glide
+	go get -u github.com/golang/dep/cmd/dep
 
 bootstrap:
-	glide install
+	dep ensure
+	dep status
 
 build:
 	go build -o vert vert.go
