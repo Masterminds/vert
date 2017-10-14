@@ -1,3 +1,5 @@
+DESTDIR=/usr/local/bin
+
 all: bootstrap test install
 
 setup:
@@ -7,14 +9,14 @@ bootstrap:
 	dep ensure
 	dep status
 
-build:
+vert:
 	go build -o vert vert.go
 
 test:
 	go test .
 
-install: build
-	install -d ${DESTDIR}/usr/local/bin/
-	install -m 755 ./vert ${DESTDIR}/usr/local/bin/vert
+install: vert
+	install -d ${DESTDIR}
+	install -m 755 ./vert ${DESTDIR}/vert
 
-.PHONY: bootstrap test build install all setup
+.PHONY: bootstrap test install all setup
