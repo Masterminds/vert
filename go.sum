@@ -1,0 +1,4 @@
+github.com/Masterminds/semver v1.4.0 h1:h9TTGlRMRjil1wsQTRj3+COyXMngVsuK6HMph+Ma7ds=
+github.com/Masterminds/semver v1.4.0/go.mod h1:MB6lktGJrhw8PrUyiEoblNEGEQ+RzHPF078ddwwvV3Y=
+github.com/urfave/cli v1.20.0 h1:fDqGv3UG/4jbVl/QkFwEdddtEDjh/5Ov6X+0B/3bPaw=
+github.com/urfave/cli v1.20.0/go.mod h1:70zkFmudgCuE/ngEzBv17Jvp/497gISqfk5gWijbERA=

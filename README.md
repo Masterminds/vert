@@ -118,17 +118,18 @@ ideas, please let us know in the issue queue.
 
 ## Installation
 
-Assuming you have make, [Go](http://golang.org) version 1.5.1 or later and
-[dep](https://github.com/golang/dep), you can simply run `make`:
+Assuming you have make, [Go](http://golang.org) version 1.11 or later,
+you can simply run `make`:
 
 ```
 $ make all
-dep ensure
-dep status
-PROJECT                        CONSTRAINT  VERSION  REVISION  LATEST   PKGS USED
-github.com/Masterminds/semver  ^1.0.0      v1.4.0   15d8430   15d8430  1
-github.com/urfave/cli          ^1.0.0      v1.20.0  cfb3883   cfb3883  1
 go test .
+go: finding github.com/Masterminds/semver v1.4.0
+go: finding github.com/urfave/cli v1.20.0
+go: downloading github.com/Masterminds/semver v1.4.0
+go: downloading github.com/urfave/cli v1.20.0
+go: extracting github.com/Masterminds/semver v1.4.0
+go: extracting github.com/urfave/cli v1.20.0
 ok  	github.com/Masterminds/vert	0.006s
 go build -o vert vert.go
 install -d /usr/local/bin/
